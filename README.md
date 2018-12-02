@@ -19,3 +19,6 @@ Original Firmware taken from: https://www.personalfab.it/downloads/download-info
  - STOP & SAVE: Possibility to save during the print the coordinates of the current working point. It is possible to recover the print in a second moment. All it needs is to select after a restart of the machine the file "RESURR.G" from the SD Card.
  - LDM Mode (Clay): Switch between FFF mode for plastic materials and LDM mode for dense-fluids extrusion. Loads different presets like print heigth and step/mm. With LDM mode enabled the temperature control is disabled.
  
+## Code differences between Firmware versions:
+ - https://github.com/unibz-makerspace/POWERWasp/compare/v1.9...v2.0
+ - https://github.com/unibz-makerspace/POWERWasp/compare/v2.0...v2.1
