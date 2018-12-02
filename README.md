@@ -1,5 +1,5 @@
 # PowerWASP Firmware v1.9
-Original Fimrware taken from: https://www.personalfab.it/downloads/download-info/firmware-powerwasp/
+Original Firmware taken from: https://www.personalfab.it/downloads/download-info/firmware-powerwasp/
 
 ## How to donwload the Firmware:
  - Download Arduino: https://www.arduino.cc/en/Main/OldSoftwareReleases#1.5.x (working version 1.6.8)
