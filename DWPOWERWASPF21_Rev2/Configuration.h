@@ -47,7 +47,7 @@
 // 66 = Melzi with ATmega1284 (MaKr3d version)
 // 67 = Azteeg X3
 // 68 = Azteeg X3 Pro
-// 7  = WASProject/Ultimaker
+// 7  = WASProject NEW BOARD 2015
 // 71 = Ultimaker (Older electronics. Pre 1.5.4. This is rare)
 // 72 = Ultimainboard 2.x (Uses TEMP_SENSOR 20)
 // 77 = 3Drag Controller

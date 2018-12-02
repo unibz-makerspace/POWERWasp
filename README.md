@@ -1,4 +1,4 @@
-# PowerWASP Firmware v2.0
+# PowerWASP Firmware v2.1
 Original Firmware taken from: https://www.personalfab.it/downloads/download-info/firmware-powerwasp/
 
 ## How to donwload the Firmware:

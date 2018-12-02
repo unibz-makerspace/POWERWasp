@@ -533,6 +533,10 @@ void check_axes_activity()
       analogWrite(HEATER_2_PIN,tail_e_to_p_pressure);
   #endif
 #endif
+
+#if defined(CURR_CONTROL_DRIVER) && CURR_CONTROL_DRIVER > -1
+	analogWrite(CURR_CONTROL_DRIVER,currentControlDriver);
+#endif
 }
 
 

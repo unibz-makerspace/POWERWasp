@@ -104,6 +104,7 @@ void Config_StoreSettings()
   EEPROM_WRITE_VAR(i,lcd_contrast);
   EEPROM_WRITE_VAR(i,clayMode);
   EEPROM_WRITE_VAR(i,Zcorrect);
+  EEPROM_WRITE_VAR(i,currentControlDriver);
   EEPROM_WRITE_VAR(i,tmp_e_step_per_unit); 
   char ver2[4]=EEPROM_VERSION;
   i=EEPROM_OFFSET;
@@ -260,6 +261,8 @@ void Config_RetrieveSettings()
         EEPROM_READ_VAR(i,lcd_contrast);
         EEPROM_READ_VAR(i,clayMode);
         EEPROM_READ_VAR(i,Zcorrect);
+		EEPROM_READ_VAR(i,currentControlDriver);
+		currentControlDriver=constrain(currentControlDriver,0,120);
         EEPROM_READ_VAR(i,tmp_e_step_per_unit); 
 		// Call updatePID (similar to when we have processed M301)
 		updatePID();
@@ -340,6 +343,7 @@ void Config_ResetDefault()
 #endif//PIDTEMP
 clayMode = false;  //Default mode Delta//
 Zcorrect = 0.00;
+currentControlDriver=80;
 SERIAL_ECHO_START;
 SERIAL_ECHOLNPGM("Hardcoded Default Settings Loaded");
 

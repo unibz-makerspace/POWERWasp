@@ -1347,16 +1347,17 @@ PK 7       69       A15
 #define SUICIDE_PIN        54  //PIN that has to be turned on right after start, to keep power flowing.
 #define EMERGENCY_STOP	   65    ///22 // A11 (X min) 65
 #define EXT_FILAMENT	   -1
+#define CURR_CONTROL_DRIVER	8   // control the current on drivers
 #ifdef ULTRA_LCD
 
   #ifdef NEWPANEL
   //arduino pin witch triggers an piezzo beeper
     #define BEEPER 18
 
-    #define LCD_PINS_RS 20
+    #define LCD_PINS_RS 14
     #define LCD_PINS_ENABLE 17
     #define LCD_PINS_D4 16
-    #define LCD_PINS_D5 21
+    #define LCD_PINS_D5 15
     #define LCD_PINS_D6 5
     #define LCD_PINS_D7 6
 

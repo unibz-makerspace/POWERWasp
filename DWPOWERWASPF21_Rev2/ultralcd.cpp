@@ -58,7 +58,7 @@ static void lcd_main_menu();
 static void lcd_tune_menu();
 static void lcd_prepare_menu();
 static void lcd_move_menu();
-static void lcd_modify_z_max();
+
 static bool stopWithoutSave=false;
 static int velocity=5;
 static void lcd_manual_calib();
@@ -278,7 +278,7 @@ if (!clayMode)    autotempShutdown();
 }
 static void lcd_sdcard_stop_save()
 {
-	bool saving = true;
+	bool saving = makeResurrection;
 	card.sdprinting = false;
 	quickStop();
 if (!clayMode)	autotempShutdown();
@@ -781,7 +781,8 @@ static void lcd_force_shutdown()
 	lcd.setCursor(0, 3);
 	lcd.print(MSG_FORCE_RESTART4);
 	
-	delay(5000);
+	do {
+	} while (true);
 	}
 static void lcd_confirm_stop()
 {
@@ -805,7 +806,10 @@ static void lcd_confirm_stop()
     		if (LCD_CLICKED)
     		{
         		lcd_quick_feedback();
-        		if (stopWithoutSave)lcd_sdcard_stop();
+        		if (stopWithoutSave){
+				lcd_sdcard_stop();
+				LCD_MESSAGEPGM(MSG_STOPPED);
+			}
         		currentMenu = lcd_status_screen;
         		encoderPosition = 0;
         		stopWithoutSave=false;
@@ -839,7 +843,6 @@ static void lcd_info_sw()
 	
 
 }
-
 static void lcd_manual_calib()
 {
 
@@ -1124,6 +1127,7 @@ static void lcd_control_motion_menu()
     MENU_ITEM_EDIT(float52, MSG_YSTEPS, &axis_steps_per_unit[Y_AXIS], 5, 9999);
     MENU_ITEM_EDIT(float51, MSG_ZSTEPS, &axis_steps_per_unit[Z_AXIS], 5, 9999);
     MENU_ITEM_EDIT(float51, MSG_ESTEPS, &axis_steps_per_unit[E_AXIS], 5, 9999);
+	MENU_ITEM_EDIT(int3, "Driver cur.", &currentControlDriver, 0, 120);
 #ifdef ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
     MENU_ITEM_EDIT(bool, MSG_ENDSTOP_ABORT, &abort_on_endstop_hit);
 #endif
@@ -1352,7 +1356,7 @@ static void menu_action_submenu(menuFunc_t data)
 static void menu_action_gcode(const char* pgcode)
 {
     enquecommand_P(pgcode);
-    lcd_return_to_status();     /// Modifica Den
+         
 }
 static void menu_action_function(menuFunc_t data)
 {

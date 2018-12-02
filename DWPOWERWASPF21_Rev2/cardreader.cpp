@@ -254,11 +254,41 @@ void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
 {
   if(!cardOK)
     return;
-  if (!file.exists("resurr.g")) {
-    	file.createContiguous(&workDir,"resurr.g",1);
+ char *compFile;
+ bool pass=false;
+ compFile="resurr.g";
+
+ for (int i=0;i<9;i++) {
+	  if (name[i]!=compFile[i]) {
+		pass=false;
+		break;
+	  } else pass=true;
+	}
+ (pass)?makeResurrection=false:makeResurrection=true;
+if (!pass) 	 {
+ if (!file.exists("resurr.g")) {
+
+    	file.createContiguous(&workDir,compFile,1);
     	file.close();
-    	
-   }
+    	file.open(&workDir,compFile,O_WRITE);
+		file.truncate(0);
+		file.close();
+    } else {
+		file.open(&workDir,compFile,O_WRITE);
+		file.truncate(0);
+		file.close();
+	}
+}
+
+
+
+
+
+
+
+
+  
+   
   if(file.isOpen())  //replacing current file by new file, or subfile call
   {
     if(!replace_current)
@@ -295,14 +325,7 @@ void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
      for (int c=0; c<=sizeof(filename); c++)
   		const_cast<char&>(filename[c]) = '\0';
      strncpy(filename, name, strlen(name));
-     SERIAL_ECHO("--- sizeof filename: ");
-     SERIAL_ECHOLN(sizeof(filename));
-     SERIAL_ECHO("--- strlen filename: ");
-     SERIAL_ECHOLN(strlen(filename));
-     SERIAL_ECHO("--- sizeof name: ");
-     SERIAL_ECHOLN(sizeof(name));
-     SERIAL_ECHO("--- strlen name: ");
-     SERIAL_ECHOLN(strlen(name));
+     
      
      
      
@@ -319,14 +342,7 @@ void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
      for (int c=0; c<=sizeof(filename); c++)
      const_cast<char&>(filename[c]) = '\0';
      strncpy(filename, name, strlen(name));
-     SERIAL_ECHO("--- sizeof filename: ");
-     SERIAL_ECHOLN(sizeof(filename));
-     SERIAL_ECHO("--- strlen filename: ");
-     SERIAL_ECHOLN(strlen(filename));
-     SERIAL_ECHO("--- sizeof name: ");
-     SERIAL_ECHOLN(sizeof(name));
-     SERIAL_ECHO("--- strlen name: ");
-     SERIAL_ECHOLN(strlen(name));
+     
      
      
 	
@@ -388,21 +404,26 @@ void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
   {
     if (file.open(curDir, fname, O_READ)) 
     {
-	char *compFile;
-	bool pass=false;
-	compFile="resurr.g";
+	
       filesize = file.fileSize();
       SERIAL_PROTOCOLPGM(MSG_SD_FILE_OPENED);
       SERIAL_PROTOCOL(fname);
       SERIAL_PROTOCOLPGM(MSG_SD_SIZE);
       SERIAL_PROTOCOLLN(filesize);
-	  for (int i=0;i<9;i++) {
-	  if (fname[i]!=compFile[i]) {
-	  pass=false;
-	  break;
-	  } else pass=true;
-	  }
-	  (pass)?makeResurrection=false:makeResurrection=true;
+      if (filesize<2) {
+      	SERIAL_ECHOLN(MSG_SD_ERROR);
+      	LCD_ALERTMESSAGEPGM(MSG_SD_ERROR);
+      	sdprinting = false;
+    		closefile();
+    		quickStop();
+    		if (!clayMode)    autotempShutdown();
+    		return;
+
+      	
+      	
+      	} else lcd_reset_alert_level();
+	  
+	  
       sdpos = 0;
       
       SERIAL_PROTOCOLLNPGM(MSG_SD_FILE_SELECTED);
@@ -494,7 +515,7 @@ void CardReader::removeFile(char* name)
     if (file.remove(curDir, fname)) 
     {
       SERIAL_PROTOCOLPGM("File deleted:");
-      SERIAL_PROTOCOL(fname);
+      SERIAL_PROTOCOLLN(fname);
       sdpos = 0;
     }
     else
@@ -594,7 +615,7 @@ void CardReader::checkautostart(bool force)
 
 void CardReader::closefile(bool saving_data)
 {	
-
+  uint32_t start_time = millis();
   file.sync();
   file.close();
   saving = false; 
@@ -621,15 +642,15 @@ void CardReader::closefile(bool saving_data)
 
 	 
 	 strcpy(nameSav, "resurr.g");
-	 
+	 /*
     if (!fileSav.exists(nameSav)) {
     	fileSav.createContiguous(&workDir,nameSav,1);
     	fileSav.close();
     	
     	}
-    
-    	 fileSav.open(&workDir,nameSav,O_WRITE);
-    	 fileSav.truncate(0);
+	*/
+	 fileSav.open(&workDir,nameSav,O_WRITE);
+     //fileSav.truncate(0);
 	 
 	 dtostrf(current_position[X_AXIS],1,3,bufX);
 	 dtostrf(current_position[Y_AXIS],1,3,bufY);
@@ -659,6 +680,7 @@ void CardReader::closefile(bool saving_data)
 	 strcat(bufCommand,bufSdpos);
 	 strcat(bufCommand," !");
 	 strcat(bufCommand,filename);
+	 SERIAL_ECHOLN("saving data");
 	 if (!clayMode) fileSav.write("M109 S100\n");
 #ifdef DELTA
 	 fileSav.write("G28\n");
@@ -696,9 +718,12 @@ void CardReader::closefile(bool saving_data)
        		fileSav.write("\n");
 	 
 	 
-    	 	fileSav.sync();
-    	 	fileSav.close();
-    	 //delay(300);
+     fileSav.sync();
+     fileSav.close();
+	 
+		SERIAL_PROTOCOLPGM("Saving time: ");
+		SERIAL_PROTOCOLLN(millis()-start_time);
+     delay(300);
 #ifdef DELTA
     	enquecommand_P(PSTR("G28"));
 #else
@@ -716,9 +741,9 @@ void CardReader::closefile(bool saving_data)
   	fanSpeed=DEFAULTFAN;
   	if (!clayMode) { 
     	 	setTargetHotend0(0);
-       	setTargetHotend1(0);
-         setTargetHotend2(0);
-         setTargetBed(0);
+			setTargetHotend1(0);
+			setTargetHotend2(0);
+			setTargetBed(0);
         }
   	}
 

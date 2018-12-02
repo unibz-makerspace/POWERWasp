@@ -692,14 +692,7 @@ void get_command()
           case 1:
           case 2:
           case 3:
-            if(Stopped == false) { // If printer is stopped by an error the G[0-3] codes are ignored.
-          #ifdef SDSUPPORT
-              if(card.saving)
-                break;
-          #endif //SDSUPPORT
-              SERIAL_PROTOCOLLNPGM(MSG_OK);
-            }
-            else {
+             if (Stopped == true) {
               SERIAL_ERRORLNPGM(MSG_ERR_STOPPED);
               LCD_MESSAGEPGM(MSG_STOPPED);
             }
@@ -2054,6 +2047,7 @@ if (!clayMode) {
       #endif
       if (code_seen('S')) {
 		savingTempEX1=code_value(); //TODO 2 EXTR
+	target_temperature[tmp_extruder]=code_value();
       	if (degHotend(tmp_extruder) > code_value()) break;
         setTargetHotend(code_value(), tmp_extruder);
         
