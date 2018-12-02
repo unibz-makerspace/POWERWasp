@@ -1,7 +1,7 @@
 # PowerWASP Firmware v2.1
 Original Firmware taken from: https://www.personalfab.it/downloads/download-info/firmware-powerwasp/
 
-## How to donwload the Firmware:
+## How to download the Firmware:
  - Download Arduino: https://www.arduino.cc/en/Main/OldSoftwareReleases#1.5.x (working version 1.6.8)
  - Connect the printer with the USB cable to a PC. The printer needs to be powered off
  - Decompress the downloaded firmware folder
